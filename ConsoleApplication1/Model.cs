@@ -15,7 +15,7 @@ namespace ConsoleApplication1
         public string 楼栋名称 { get; set; }
         public string 房号 { get; set; }
         public string 客户名称 { get; set; }
-        public DateTime 收款日期 { get; set; }
+        public  DateTime? 收款日期 { get; set; }
         //票据类型	票据编号	款项类型	款项名称
 
         public string 票据类型 { get; set; }
