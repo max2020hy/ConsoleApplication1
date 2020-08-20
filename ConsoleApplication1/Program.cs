@@ -15,10 +15,13 @@ using System.Diagnostics;
 namespace ConsoleApplication1
 {
     class Program
-    { public static string change_File;
+    {// public static string change_File;
       public static FileSystemWatcher FSW;
+      public static  string config = System.Configuration.ConfigurationManager.AppSettings["ModelFileFullPath"];
         static void Main(string[] args)
         {
+            Console.WriteLine(config);
+        
             //C:\Users\1\Downloads\
             string dir_old = @"c:\Users\1\Downloads\";
             if (!Directory.Exists(dir_old))
@@ -53,6 +56,7 @@ namespace ConsoleApplication1
         private static void CreatReport(List<Model> lst)
         {
             #region 加载xls文件
+        
             //模板文件路径
             string path = @"C:\Users\1\Desktop\日报\实收款项明细表.xls";
             FileStream fs_modle;
@@ -62,10 +66,10 @@ namespace ConsoleApplication1
 
 
                 IWorkbook workbook_model = new NPOI.HSSF.UserModel.HSSFWorkbook(fs_modle);
-               // fs_modle.Close();
+               //  fs_modle.Close();
                
                 ISheet sheet_model = workbook_model.GetSheetAt(0);
-                IRow row_hj = sheet_model.GetRow(7);
+                IRow row_hj = sheet_model.GetRow(7);//合计行
                 //设置单元格时
                 ICellStyle style = workbook_model.CreateCellStyle();
 
@@ -183,16 +187,33 @@ namespace ConsoleApplication1
                 sheet_model.GetRow(3).GetCell(0).SetCellValue(ZQ);
                 sheet_model.GetRow(4).GetCell(0).SetCellValue(DT);
                 string newFileFullPath =$@"{ Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}";
-
-                FileStream fs = new FileStream($"{newFileFullPath}\\日报\\日报表{DateTime.Now.ToShortDateString()}.xls", FileMode.OpenOrCreate, FileAccess.Write);
                 string filePath = $"{newFileFullPath}\\日报\\日报表{DateTime.Now.ToShortDateString()}.xls";
-                workbook_model.Write(fs);
-                fs.Dispose();
-                Console.WriteLine("文件创建成功!");
-                workbook_model.Close();
+                try
+                {
+                    using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        workbook_model.Write(fs);
+                    } 
 
-                lst.Clear();
-                Process.Start("wps.exe", filePath);
+                  
+                   // fs.Dispose();
+                    Console.WriteLine("文件创建成功!");
+                  //  workbook_model.Close();
+
+                    lst.Clear();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+             
+                finally
+                {
+                    Console.WriteLine( File.Exists(filePath));
+                      Process.Start(@"C:\Program Files (x86)\Kingsoft\WPS Office\11.1.0.9912\office6\wps.exe", filePath);
+                }
+               
             }
             #endregion
         }
