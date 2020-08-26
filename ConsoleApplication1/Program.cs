@@ -198,9 +198,11 @@ namespace ConsoleApplication1
                   
                    // fs.Dispose();
                     Console.WriteLine("文件创建成功!");
+
+
                   //  workbook_model.Close();
 
-                    lst.Clear();
+                   lst.Clear();
                 }
                 catch (Exception)
                 {
@@ -282,9 +284,17 @@ namespace ConsoleApplication1
             Thread.Sleep(3000);
            // change_File = e.FullPath;
             Console.WriteLine($"文件{e.FullPath}被创建");
-          //  FSW.EnableRaisingEvents = false;
-            Lst= ReadRep(e.FullPath);
+            //  FSW.EnableRaisingEvents = false;
+            Lst = ReadRep(e.FullPath);
+            var sum_HJ = Lst.Sum(s => s.金额);
+            var sum_XJ = Lst.Where(t => t.支付方式 == "现金").Sum(s => s.金额);
+            var sum_YH = Lst.Where(t => t.支付方式 == "银行").Sum(s => s.金额);//银行
+            var sum_ZZ = Lst.Where(t => t.银付方式 == "转账").Sum(s => s.金额);
+            var sum_POS = Lst.Where(t => t.银付方式 == "POS机").Sum(s => s.金额);
+            string repSum = $@"收款：{sum_HJ}\t其中：银行：{sum_YH}（转账：{sum_ZZ} POS：{sum_POS}）现金：{sum_XJ}";
+            Console.WriteLine(repSum);
             CreatReport(Lst);
+           
             Lst.Clear();
         }
     }
